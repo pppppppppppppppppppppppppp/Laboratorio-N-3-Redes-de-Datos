@@ -1,0 +1,106 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\title{\textbf{Creacion de paquetes utilizando scapy y validacion con wireshark. Laboratorio N°3 }}
+\begin{document}
+\begin{center}\includegraphics[width=10cm]{../../IMAGENES/logo_udp}
+	\textbf{\LARGE{\\
+			Escuela de Informática y Telecomunicaciones\\\underline{\hspace{13cm}}\vspace{1cm}\\Creación de paquetes utilizando scapy y validacion con wireshark\vspace{1cm} Laboratorio N°3, Redes de Datos}}
+\end{center}
+\vspace{7cm}
+\textbf{Profesor:\hspace{3mm} Jaime \'{A}lvarez\\Ayudante: Alexis Inzunza\\Alumnos: \hspace{2mm}Javier Nuñez, Felipe Saavedra, Felipe Vizcarra\begin{center}
+		13 de Abril 2016
+	\end{center}}
+\newpage
+\textbf{{\Huge Indice:}\\
+	\\
+	\\
+	\\
+	{\large Desarrollo del laboratorio.........................................3\\
+		\\
+		Respuestas al cuestionario........................................7
+\\
+\\
+Conclusión................................................................8}}
+\newpage
+\section{Desarrollo del laboratorio}
+\hspace{5mm}En nuestra actividad correspondiente al laboratorio numero 3 de Redes de Datos se pidió crear un paquete de datos mediante el uso de la herramienta Scapy, para crear el paquete de datos solicitado.\\
+\\
+Antes de crear nuestro paquete, procedimos a rastrear los  paquetes que ingresaban y salían de nuestro pc utilizando nuestro software WireShark.\\
+\\
+Utilizando  el  comando  Ifconfig en nuestro terminal del computador, pudimos conocer nuestra direccion ip e intercambiarla con otro usuario del laboratorio de telemática, para así enviar un "ping" al otro equipo y rastrear este "ping" con el cual , usando WireShark, se podrá conocer la MAC de destino y origen.\\
+\\
+\includegraphics[width=13cm]{../../IMAGENES/DSC_0016}
+\\
+\\
+Al saber las MAC relacionadas a cada uno de los computadores podremos proceder a crear nuestro paquete mediante el uso del ya nombrado Scapy.\\
+\\
+Scapy se debe utilizar mediante comandos introducidos en el terminal, este se inicia escribiendo "sudo scapy".
+\newpage
+El siguiente comando utilizado es Ether() que se basa en la capa 2 OSI, el cual debemos guardarlo en alguna variable , en este caso usamos el nombre "Enlace" para así evitar confusiones al final del proceso. El procedimiento para ejecutar el comando ya ingresado en poniendo en el nombre de nuestra variable ya creada con su función ya asignada dentro de él  comando "ls()",por ejemplo  en este caso sería ls(Enlace).
+
+\begin{center}
+\textbf{Enlace=Ether()\\
+ls(Enlace)}\\
+\includegraphics[width=13cm]{../../IMAGENES/DSC_0012}
+\end{center}
+\newpage
+Ahora en la pantalla nos apareció las MAC de origen y destino "vacías", por ende, debemos modificarlas utilizando 2 nuevos comandos:\begin{center}
+	\textbf{Enlace.dst:"A1:B2:C3:D4:E5:F6"\\       Enlace.src:"1A:2B:3C:4D:5E:6F"}\\
+	\includegraphics[width=13cm]{../../IMAGENES/DSC_0014}
+	\end{center}
+Aquí es donde debemos volver a  nuestra ventana de WireShark para saber que direcciones debemos escribir en nuestro DST(Destino) y SRC(Origen) para tener un enrutamiento correcto a nuestro futuro paquete.\\
+\\
+El siguiente paso a seguir es crear otra variable con su función asignada, esta será "IP ()" la cual está asociada a la tercera capa, ahora utilizaremos la variable red. Esto quedaría representado(ya ejecutado) como:
+ \begin{center}\textbf{red=IP()\\ ls(red)}\end{center}
+De la misma forma, si  utilizamos ahora  el  comando  "ICMP ()", este se basa en la cuarta capa de OSI, asignándolo a la variable Transporte y al ejecutarlo utilizando ls(Transporte)
+\newpage
+Ya en nuestro último paso solo nos quedaría utilizar el comando "Raw ()" asignada a nuestra variable "payload" que con esta ya estaría casi finalizado  nuestro paquete de datos.\\
+\\
+Para finalizar nuestra actividad de laboratorio solo nos resta armar nuestro paquete llamando a todas las variables ya creadas anteriormente. Esto quedaría:
+
+\begin{center}
+\textbf{paquete=Enlace/red/Transporte/payload}
+\includegraphics[width=13cm]{../../IMAGENES/DSC_0015}
+\end{center}
+
+
+Nuestro comando final es solo sendp (paquete) que nos mostrara en pantalla que nuestro paquete llego satisfactoriamente al destino MAC asignado a este.\\
+\\
+Al hacer la misma prueba de conexion enviando un paquete creado en Scapy pero con la diferencia que en vez de usar un switch como interfaz lo intercambiamos por un Hub.\\
+\\
+En este caso el resultado vario en que el Hub ,al contrario del switch, reenvia los paquetes a todos los usuarios conectados al hub.El computador en si es el que revisa si es que el paquete va direccionado a el y en ese caso lo recibe , en caso contrario solo lo rechaza ,por ende , no lo recibe si es que no esta direccionado hacia el.
+\newpage
+\section{Cuestionario}
+\hspace*{6mm}\textbf{Preguntas:}\\
+\\
+1.¿Qué pasa cuando envió un paquete a la dirección FF:FF:FF:FF:FF:FF? ¿Quienes
+lo reciben? ¿Por qué?\\
+2.¿Qué pasa cuando envió un paquete a una MAC de otro equipo? ¿Quienes lo
+pueden reciben? ¿Por qué?\\
+3.¿Qué sucede si envía un paquete a una MAC que no corresponda a ningún equipo
+de la red? ¿Quienes lo pueden recepcionar? ¿Por qué?\\
+\\
+\hspace*{6mm}\textbf{Respectivas respuestas:}\\
+\\
+1. Cuando se envía un paquete desde un pc a una dirección de FF:FF:FF:FF:FF:FF de otro pc, el paquete le llega a todos los computadores que estén conectados a la red incluyendo al que se le debe mandar originalmente.\\
+\\
+2. Cuando se envía un paquete desde un pc a una dirección mac de otro pc, el paquete solo le llegaría al pc de la dirección al cual lo mandamos y no le llegaría a los otros pc que se encuentran conectados en la misma red.\\
+\\
+3. Al mandar un paquete a una dirección Mac de un ordenador que no se encuentra conectado, en el caso de que la red posea:\\ 
+\\
+\hspace*{5mm}A) En un Switch, el paquete no le llegaría a ningún ordenador, ya que este solo envía el paquete al ordenador si este se encuentra y si es el correcto, por lo tanto el paquete no le llegaría a ningún ordenador.\\
+\\
+\hspace*{5mm}B) En el caso del Hub, el paquete le llegaría a todos los ordenadores, ya que este pasa por el Hub antes de llegar a cualquier destino y lo dirigiría a todos los ordenadores conectados a la red, aunque no esté la dirección Mac enviada.
+\newpage
+\section{Conclusión}
+\hspace*{6mm}En nuestra experiencia en el laboratorio de telemática, tuvimos la oportunidad de utilizar softwares especiales como lo son WireShark y Scapy. Estas herramientas nos fueron tremendamente útiles para nuestro aprendizaje sobre cómo se envían los paquetes de datos entre equipos.\\
+\\
+\hspace*{6mm}WireShark como herramienta para seguir la ruta de un paquete resulto muy eficaz para poder obtener la dirección MAC del equipo al que buscábamos mandarle el paquete creado para probar si la conexión estaba estable y bien hecha revisando que el paquete llegara satisfactoriamente. Mientras que Scapy nos fue útil para crear el paquete que fue seguido por WireShark, ya que en este software se puede establecer la MAC de destino y la de origen. Además de decirnos en el momento que el elemente en cuestión fue enviado exitosamente.\\
+\\
+\hspace*{6mm}Como grupo de trabajo podemos concluir que esta actividad realizada en el laboratorio de telemática de nuestra facultad fue fundamental para comprender de una forma más extensa y completa sobre el comportamiento de los paquetes que se envían a través de la red LAN, ya que, pudimos ver más de cerca el enrutamiento de paquetes y como es que se le da una dirección de destino a un bloque de información.
+
+\end{document}
